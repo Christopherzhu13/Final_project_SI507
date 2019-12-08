@@ -166,88 +166,11 @@ def get_server_info():
     json_str2 = json.dumps(player_list)
     with open('players.json', 'w') as json_file:
         json_file.write(json_str2)
-#
-# def get_players_for_server():
-#     print("Getting data for players...")
-#     player_list=[]
-#     user_agent = {'User-agent': 'Mozilla/5.0'}
-#     page_url = 'https://lolprofile.net/leaderboards'
-#     content_div = 'r100'
-#     servers_info = make_request_using_cache(page_url, user_agent, content_div)
-#     servers_info = BeautifulSoup(servers_info, 'html.parser')
-#     table_cells = servers_info.find_all('a')
-#     for region in table_cells:
-#
-#
-#         server_url=region['href']
-#         server_name=region.text
-#         if server_name=='Champion':
-#             break
-#         state_content = 'table table1 s-c-table lb-table'
-#         server_details = make_request_using_cache(server_url, user_agent, state_content)
-#         server_details = BeautifulSoup(server_details, 'html.parser')
-#         players = server_details.find('tbody')
-#         players = players.find_all('tr')
-#         for player in players:
-#
-#             n_player={}
-#             rank = player.find('td').text
-#             rank = rank[1:]
-#             id = player.find('span').text
-#             print(id)
-#             point = player.find(class_='alt ce mhide')
-#             point = point.text
-#             player_url = player.find('a')['href']
-#
-#             DETAIL = make_request_using_cache(player_url, user_agent)
-#             DETAIL = BeautifulSoup(DETAIL, 'html.parser')
-#             detail_info = DETAIL.find(class_='a2')
-#             if detail_info==None:
-#                 n_player['id'] = id
-#                 n_player['rank'] = rank
-#                 n_player['point'] = point
-#                 n_player["play's url"] = player_url
-#                 n_player['Name of Server'] = server_name
-#                 n_player['win rate'] = None
-#                 n_player['Most played hero'] = None
-#                 n_player['Most played lane'] = None
-#                 player_list.append(n_player)
-#                 continue
-#             detail_info1 = detail_info.find('div')
-#             win_rate = detail_info1.find('div').text
-#             lane = detail_info.find_all('div')[5].text
-#             hero = DETAIL.find(class_="champid")
-#             if hero==None:
-#                 n_player['id'] = id
-#                 n_player['rank'] = rank
-#                 n_player['point'] = point
-#                 n_player["play's url"] = player_url
-#                 n_player['Name of Server'] = server_name
-#                 n_player['win rate'] = win_rate
-#                 n_player['Most played hero'] = None
-#                 n_player['Most played lane'] = lane
-#                 player_list.append(n_player)
-#                 continue
-#             hero = hero.text
-#
-#             n_player['id'] =id
-#             n_player['rank'] =rank
-#             n_player['point'] =point
-#             n_player["play's url"] =player_url
-#             n_player['Name of Server'] =server_name
-#             n_player['win rate'] =win_rate
-#             n_player['Most played hero'] =hero
-#             n_player['Most played lane'] =lane
-#             player_list.append(n_player)
-#
-#     json_str = json.dumps(player_list)
-#     with open('players.json', 'w') as json_file:
-#         json_file.write(json_str)
-#
 
 
 
 
+#using JSON to create the data base
 DBNAME = 'LOL.db'
 serverJSON= 'servers.json'
 playerJSON = 'players.json'
@@ -343,12 +266,15 @@ for player in player_data:
 conn.commit()
 conn.close()
 
+
+
 def process_command(command):
     conn = sqlite3.connect(DBNAME)
     cur = conn.cursor()
     result = []
 
     command_word = command.split()
+    #search for players
     if command_word[0] == 'player':
         statement = '''SELECT m.GameID, m.rank, m.Point, m.WinRate,m.Mostplayedhero,m.Mostplayedlane, s.ServerName
                     FROM Players as m JOIN Servers as s ON m.NameofServer=s.Abbreviation Where m.GameID is not NULL '''
@@ -433,7 +359,7 @@ def process_command(command):
 
 
 
-
+#search for servers
     elif command_word[0] == 'server':
 
 
